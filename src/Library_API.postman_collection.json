@@ -1,0 +1,381 @@
+{
+	"info": {
+		"_postman_id": "7f9a15a8-203c-4bf0-b1ff-926cb181de54",
+		"name": "Library API",
+		"description": "API derived from the web.php routes.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{ "key": "name", "value": "Test User", "type": "text" },
+								{ "key": "email", "value": "test@example.com", "type": "text" },
+								{ "key": "password", "value": "password", "type": "text" },
+								{ "key": "password_confirmation", "value": "password", "type": "text" }
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login (Token Generation)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if(jsonData.token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{ "key": "email", "value": "admin@example.com", "type": "text" },
+								{ "key": "password", "value": "password", "type": "text" }
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Member / Public",
+			"item": [
+				{
+					"name": "Get All Books",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/books",
+							"host": ["{{base_url}}"],
+							"path": ["api", "books"]
+						}
+					}
+				},
+				{
+					"name": "Get User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "profile"]
+						}
+					}
+				},
+				{
+					"name": "Borrow Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/borrow/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "borrow", "1"]
+						}
+					}
+				},
+				{
+					"name": "Return Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/borrow/return/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "borrow", "return", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin & Librarian",
+			"item": [
+				{
+					"name": "Manage Books List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/books/manage",
+							"host": ["{{base_url}}"],
+							"path": ["api", "books", "manage"]
+						}
+					}
+				},
+				{
+					"name": "Create Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{ "key": "title", "value": "New Book Title", "type": "text" },
+								{ "key": "author", "value": "Author Name", "type": "text" },
+								{ "key": "description", "value": "Description of the book", "type": "text" }
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/books",
+							"host": ["{{base_url}}"],
+							"path": ["api", "books"]
+						}
+					}
+				},
+				{
+					"name": "Update Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{ "key": "Accept", "value": "application/json" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Book Title\",\n  \"author\": \"Updated Author\",\n  \"description\": \"Updated Description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/books/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "books", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/books/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "books", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users"]
+						}
+					}
+				},
+				{
+					"name": "Get All Borrows",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/borrows",
+							"host": ["{{base_url}}"],
+							"path": ["api", "borrows"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin Only",
+			"item": [
+				{
+					"name": "Create Librarian",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{ "key": "name", "value": "Librarian Name", "type": "text" },
+								{ "key": "email", "value": "librarian@example.com", "type": "text" },
+								{ "key": "password", "value": "password", "type": "text" }
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/librarian",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "librarian"]
+						}
+					}
+				},
+				{
+					"name": "Get Roles List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{ "key": "token", "value": "{{token}}", "type": "string" }
+							]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/roles",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "roles"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
