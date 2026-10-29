@@ -3,8 +3,8 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\BorrowController;
+use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,19 +18,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ── Health & Readiness Checks (Docker & Monitoring) ─────────────────────
-Route::get('/health', function () {
-    return response()->json(['status' => 'ok'], 200);
-});
-
-Route::get('/ready', function () {
-    try {
-        DB::connection()->getPdo();
-
-        return response()->json(['status' => 'healthy', 'database' => 'up'], 200);
-    } catch (Exception $e) {
-        return response()->json(['status' => 'unhealthy', 'error' => $e->getMessage()], 500);
-    }
-});
+Route::get('/health', [HealthController::class, 'live']);
+Route::get('/ready', [HealthController::class, 'ready']);
 
 // ── Public (Guest) ──────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
