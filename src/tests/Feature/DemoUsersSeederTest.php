@@ -11,21 +11,18 @@ class DemoUsersSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_demo_users_seeder_creates_users_successfully(): void
+    public function test_demo_users_seeder_creates_users_with_roles_successfully(): void
     {
-        // 1. Create every role the seeder assigns (the test DB starts empty)
-        Role::create(['name' => 'Admin']);
-        Role::create(['name' => 'Librarian']);
-        Role::create(['name' => 'Member']);
+        Role::firstOrCreate(['name' => 'Admin']);
+        Role::firstOrCreate(['name' => 'Librarian']);
+        Role::firstOrCreate(['name' => 'Member']);
 
-        // 2. Run the seeder
         $this->seed(DemoUsersSeeder::class);
 
-        // 3. Verify the data
         $this->assertDatabaseCount('users', 3);
 
-        $this->assertDatabaseHas('users', ['email' => 'admin@gmail.com']);
-        $this->assertDatabaseHas('users', ['email' => 'lib@gmail.com']);
-        $this->assertDatabaseHas('users', ['email' => 'mohamed@gmail.com']);
+        $this->assertDatabaseHas('users', ['email' => 'admin@example.com']);
+        $this->assertDatabaseHas('users', ['email' => 'librarian@example.com']);
+        $this->assertDatabaseHas('users', ['email' => 'member@example.com']);
     }
 }
