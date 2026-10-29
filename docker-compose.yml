@@ -2,74 +2,81 @@ services:
 
   nginx:
     image: nginx:alpine
-
     ports:
-      - "80:80"
-    
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition : on-failure
-    
-      
-
-
+      - "8080:80"
+    restart: unless-stopped
     volumes:
-      - ./src/public:/var/www/html/public
+      - ./src/public:/var/www/html/public:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-
     networks:
       - front-end
       - back-end
-
     depends_on:
       - app
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/api/ready"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
 
 
   app:
-    image: my-laravel-app:latest
-    
-    deploy:
-      replicas: 2
-      placement:
-      
-        constraints:
-          - "node.role == worker"
-
-    volumes:
-      - ./src:/var/www/html
-
+    build: .
+    image: library-app:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    command:
+      - sh
+      - -c
+      - |
+        php artisan migrate --force &&
+        if [ "$$SEED_DEMO_DATA" = "true" ]; then
+          php artisan db:seed --force || echo "Seeding skipped (data may already exist)"
+        fi &&
+        exec php-fpm
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY:?Set APP_KEY in .env}
+      LOG_CHANNEL: stderr
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: ${DB_DATABASE:?Set DB_DATABASE in .env}
+      DB_USERNAME: ${DB_USERNAME:?Set DB_USERNAME in .env}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
     networks:
       - back-end
-
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
 
   mysql:
     image: mysql:8.0
-
+    restart: unless-stopped
     environment:
-      
-      MYSQL_DATABASE: laravel
-      MYSQL_USER: laravel
-      MYSQL_PASSWORD: secret
-      MYSQL_ROOT_PASSWORD: rootsecret
-
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}
     volumes:
       - mysql-data:/var/lib/mysql
-
     networks:
       - back-end
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 
 networks:
 
   front-end:
-    
 
   back-end:
-    driver: overlay
     internal: true
 
 

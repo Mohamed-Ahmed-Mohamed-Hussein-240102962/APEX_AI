@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\BorrowController;
@@ -16,6 +17,20 @@ use App\Http\Controllers\Api\UserController;
 | Token-based auth via Laravel Sanctum (Bearer Token).
 |
 */
+
+// ── Health & Readiness Checks (Docker & Monitoring) ─────────────────────
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok'], 200);
+});
+
+Route::get('/ready', function () {
+    try {
+        DB::connection()->getPdo();
+        return response()->json(['status' => 'healthy', 'database' => 'up'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'unhealthy', 'error' => $e->getMessage()], 500);
+    }
+});
 
 // ── Public (Guest) ──────────────────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -39,8 +54,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── Admin | Librarian ───────────────────────────────────────────────
     Route::middleware('role:Admin|Librarian')->group(function () {
-        Route::post('/books',          [BookController::class, 'store']);
-        Route::put('/books/{book}',    [BookController::class, 'update']);
+        Route::post('/books',         [BookController::class, 'store']);
+        Route::put('/books/{book}',   [BookController::class, 'update']);
         Route::delete('/books/{book}', [BookController::class, 'destroy']);
 
         Route::get('/users',   [UserController::class, 'index']);
