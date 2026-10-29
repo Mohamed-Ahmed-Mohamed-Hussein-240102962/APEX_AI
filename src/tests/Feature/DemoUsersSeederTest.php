@@ -2,27 +2,27 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Database\Seeders\DemoUsersSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
+use Tests\TestCase;
 
 class DemoUsersSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_demo_users_seeder_creates_users_successfully(): void
+    public function test_demo_users_seeder_creates_users_with_roles_successfully(): void
     {
-        Role::create(['name' => 'Admin']);
-        Role::create(['name' => 'Librarian']);
-        Role::create(['name' => 'Member']);
+        Role::firstOrCreate(['name' => 'Admin']);
+        Role::firstOrCreate(['name' => 'Librarian']);
+        Role::firstOrCreate(['name' => 'Member']);
 
         $this->seed(DemoUsersSeeder::class);
 
         $this->assertDatabaseCount('users', 3);
 
-        $this->assertDatabaseHas('users', ['email' => 'admin@gmail.com']);
-        $this->assertDatabaseHas('users', ['email' => 'lib@gmail.com']);
-        $this->assertDatabaseHas('users', ['email' => 'mohamed@gmail.com']);
+        $this->assertDatabaseHas('users', ['email' => 'admin@example.com']);
+        $this->assertDatabaseHas('users', ['email' => 'librarian@example.com']);
+        $this->assertDatabaseHas('users', ['email' => 'member@example.com']);
     }
 }
