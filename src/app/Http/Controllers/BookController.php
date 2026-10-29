@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Book;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
     public function index()
     {
         $books = Book::all();
+
         return view('books.index', compact('books'));
     }
 
     public function manage()
     {
         $books = Book::all();
+
         return view('books.manage', compact('books'));
     }
 
@@ -47,6 +49,7 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         $book->delete();
+
         return redirect()->back()->with('success', 'Book deleted successfully.');
     }
 }

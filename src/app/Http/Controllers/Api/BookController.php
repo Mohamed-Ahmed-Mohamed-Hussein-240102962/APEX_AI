@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Book;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
@@ -58,7 +58,7 @@ class BookController extends Controller
         $validated = $request->validate([
             'title' => 'sometimes|string|max:255',
             'author' => 'sometimes|string|max:255',
-            'isbn' => 'sometimes|string|max:255|unique:books,isbn,' . $book->id,
+            'isbn' => 'sometimes|string|max:255|unique:books,isbn,'.$book->id,
             'copies' => 'sometimes|integer|min:0',
         ]);
 

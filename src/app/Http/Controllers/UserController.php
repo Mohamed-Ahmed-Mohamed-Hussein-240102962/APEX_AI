@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -12,6 +12,7 @@ class UserController extends Controller
     {
         // Protected for Admin|Librarian at route level
         $users = User::with('roles')->get();
+
         return view('users.index', compact('users'));
     }
 

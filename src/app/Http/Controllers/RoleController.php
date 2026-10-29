@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -11,6 +10,7 @@ class RoleController extends Controller
     {
         // Require Admin middleware will be added at route level
         $roles = Role::with('permissions')->get();
+
         return view('admin.roles', compact('roles'));
     }
 }

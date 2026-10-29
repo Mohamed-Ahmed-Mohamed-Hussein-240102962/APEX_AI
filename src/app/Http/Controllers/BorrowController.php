@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\BorrowRecord;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -18,11 +18,11 @@ class BorrowController extends Controller
 
         DB::transaction(function () use ($book) {
             $book->decrement('copies');
-            
+
             BorrowRecord::create([
                 'user_id' => Auth::id(),
                 'book_id' => $book->id,
-                'status' => 'borrowed'
+                'status' => 'borrowed',
             ]);
         });
 
@@ -32,12 +32,14 @@ class BorrowController extends Controller
     public function profile()
     {
         $records = BorrowRecord::where('user_id', Auth::id())->with('book')->latest()->get();
+
         return view('profile.index', compact('records'));
     }
 
     public function index()
     {
         $records = BorrowRecord::with(['user', 'book'])->latest('updated_at')->get();
+
         return view('borrows.index', compact('records'));
     }
 
