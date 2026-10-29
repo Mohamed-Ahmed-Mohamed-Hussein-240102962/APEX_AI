@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ── Health & Readiness Checks (Docker & Monitoring) ─────────────────────
-Route::get('/health', [HealthController::class, 'live']);
+Route::get('/health', [HealthController::class, 'liv']);
 Route::get('/ready', [HealthController::class, 'ready']);
 
 // ── Public (Guest) ──────────────────────────────────────────────────────
