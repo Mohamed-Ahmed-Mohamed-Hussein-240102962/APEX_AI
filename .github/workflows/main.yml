@@ -99,7 +99,7 @@ jobs:
       - name: Post-Deploy Readiness Verification
         run: |
           echo "Verifying /api/health and /api/ready..."
-          curl -fsS --retry 5 --retry-delay 2 http://localhost:8080/api/health
+          curl -fsS --retry 5 --retry-delay 2 http://localhost:8080/api/heal
           curl -fsS --retry 5 --retry-delay 2 http://localhost:8080/api/ready || {
             echo "Verification failed Triggering Rollback..."
             ./scripts/rollback.sh HEAD~1
