@@ -2,7 +2,8 @@ FROM php:8.3-fpm-alpine
 
 WORKDIR /var/www/html
 
-RUN apk add --no-cache libzip unzip \
+RUN apk upgrade --no-cache \
+    && apk add --no-cache libzip unzip \
     && apk add --no-cache --virtual .build-deps libzip-dev \
     && docker-php-ext-install pdo_mysql zip \
     && apk del .build-deps
