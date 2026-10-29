@@ -17,7 +17,7 @@
     </div>
 
     <header class="navbar">
-        <a href="/" class="nav-brand">LibrarySys</a>
+        <a href="/" class="nav-brand">Apex_AI</a>
         <div class="nav-links">
             @auth
                 <a href="{{ route('dashboard') }}">Dashboard</a>
